@@ -1,27 +1,57 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div id="app">
+    <h1>Population Trends by Prefecture</h1>
+    <PrefectureList @prefectureSelected="handlePrefectureSelected" />
+    <PopulationGraph :selectedPrefectures="selectedPrefectures" />
+  </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "./components/HelloWorld.vue";
+import { defineComponent, ref } from "vue";
+import PrefectureList from "./components/PrefectureList.vue";
+import PopulationGraph from "./components/PopulationGraph.vue";
 
-@Options({
+export default defineComponent({
+  name: "App",
   components: {
-    HelloWorld,
+    PrefectureList,
+    PopulationGraph,
   },
-})
-export default class App extends Vue {}
+  setup() {
+    const selectedPrefectures = ref<number[]>([]);
+
+    const handlePrefectureSelected = (prefCode: number) => {
+      if (selectedPrefectures.value.includes(prefCode)) {
+        selectedPrefectures.value = selectedPrefectures.value.filter(
+          (code) => code !== prefCode
+        );
+      } else {
+        selectedPrefectures.value.push(prefCode);
+      }
+    };
+
+    return {
+      selectedPrefectures,
+      handlePrefectureSelected,
+    };
+  },
+});
 </script>
 
 <style>
+/* Basic styles */
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
 }
 </style>
